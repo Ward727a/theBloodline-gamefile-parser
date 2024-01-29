@@ -579,7 +579,7 @@ function extract_class_path(element){
 
     const classPath = classPathFull.replace("BlueprintGeneratedClass'", "").replace(OBJECT_OUTER+"'", OBJECT_OUTER);
 
-    let classPathPure = ""
+    let classPathPure = classPath
 
     if(classPath.includes("TheBloodline/Content")){
         classPathPure = classPath.replace("TheBloodline/Content", "/Game");
