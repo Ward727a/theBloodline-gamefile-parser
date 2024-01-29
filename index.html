@@ -1,0 +1,53 @@
+<head>
+    <title>The Bloodline gamefile parser</title>
+</head>
+<body class="dark">
+    <p>
+        FYI: <br/>
+        <ul>
+            <li>
+                The name of the properties is first, the type is second example: <br/>
+                playerName - text <br/>
+                here playerName is the name of the property and text is the type
+            </li><br/>
+            <li>
+                If a type is surrounded with [[ ]] the it's a type from the game, example: <br/>
+                PlayerItem - [[item]] <br/> <br/>
+                The "item" type is not from Unreal Engine, it's a type created by the dev, so it's surrounded with [[ ]]<br/>
+                Generally the name of the type is the name of the file that you need to search for to "decode" it
+            </li><br/>
+            <li>
+                If you're using "Obsidian" and want the text to be a little more **beautiful** then once you pasted the text, <br/>select all of it then press "SHIFT + TAB", unselect it, then here is it, you have a beautifful **bullet list** =D
+            </li><br/>
+            <li>
+                This tool was created in like... 5 hours or so? So it's clearly not perfect, if you have any suggestions, <br/>feel free to contact me on Discord!<br/><br/><br/>
+                Ho and: I will probably not edit the style of the page, it's a little tool, BUT if you want to do it, feel free to do so, then ask me to push it, you will be credited for it =)
+            </li>
+        </ul>
+    </p>
+    <br/>
+    <button id="theme">Switch Theme</button>
+    <br/><br/>
+
+    <form id="jsonForm">
+        <input type="file" accept=".json" id="jsonFile" />
+        <button type="submit">Submit</button>
+    </form>
+
+    <p id="result" style="white-space: 'pre-wrap'"></p>
+    <button id="copy">Copy to Clipboard</button>
+</body>
+<script src="main.js"></script>
+
+
+<style>
+    .dark{
+        font-family: Arial, Helvetica, sans-serif;
+        color: rgb(219, 219, 219);
+        background-color: rgb(12, 11, 22);  
+    }
+    .light{
+        color: rgb(12, 11, 22);
+        background-color: rgb(219, 219, 219);  
+    }
+</style>
