@@ -6,6 +6,8 @@ const theme_btn = document.querySelector('#theme');
 
 let theme = "dark";
 
+const reader = new FileReader();
+
 theme_btn.addEventListener('click', e => {
     if (theme === "dark"){
         theme = "light";
@@ -18,7 +20,6 @@ theme_btn.addEventListener('click', e => {
     }
 });
 
-const reader = new FileReader();
 
 form.addEventListener('submit', e => {
     e.preventDefault();
@@ -44,6 +45,8 @@ reader.onload = function(event) {
 
 };
 
+// The UE Name of the object (only used for the path)
+let OBJECT_OUTER = "";
 
 function convert_data_to_obsidian(JSON_data){
     let text = "";
@@ -63,14 +66,20 @@ function convert_data_to_obsidian(JSON_data){
 
 function convert_element_to_obsidian(element){
 
-    if (element.Type === "Function"){
+    if (element.hasOwnProperty("Outer") && OBJECT_OUTER !== element.Outer){
+        OBJECT_OUTER = element.Outer;
+    }
+
+    if (element.Type === "Function"){ // Is Function?
         return convert_function_to_obsidian(element);
-    } else if (element.Type === "BlueprintGeneratedClass"){
+    } else if (element.Type === "BlueprintGeneratedClass"){ // Is a Class?
         return convert_property_to_obsidian(element);
-    } else if (element.Type === "UserDefinedStruct"){
+    } else if (element.Type === "UserDefinedStruct"){ // Is a Struct?
         return convert_structure_to_obsidian(element);
-    } else if (element.Type === "UserDefinedEnum"){
+    } else if (element.Type === "UserDefinedEnum"){ // Is a Enum?
         return convert_enum_to_obsidian(element);
+    } else if (OBJECT_OUTER && element.Type === OBJECT_OUTER){ // Is the ClassPath?
+        return extract_class_path(element);
     }
 
 }
@@ -198,6 +207,7 @@ function convert_property_to_obsidian(data){
 
         }
     }
+
     if (hasProperty){
         return text;
     } else {
@@ -469,7 +479,6 @@ function convert_enum_to_obsidian(data){
     return text;
 }
 
-
 function struct_convert_childData_to_obsidian(text, data){
     
     // Is enum?
@@ -546,7 +555,6 @@ function struct_convert_childData_to_obsidian(text, data){
 
 }
 
-
 function enum_found_index_with_key(key, names){
 
     for (let name in names) {
@@ -555,4 +563,29 @@ function enum_found_index_with_key(key, names){
         }
     }
     return -1;
+}
+
+function extract_class_path(element){
+    
+    console.trace(OBJECT_OUTER);
+
+    let text = "\n- Class Path:"
+
+    if (!element.hasOwnProperty("Class")) return "";
+    if (!element.Class.includes(OBJECT_OUTER)) return "";
+    if (!element.Class.includes("BlueprintGeneratedClass")) return "";
+
+    const classPathFull = element.Class;
+
+    const classPathPure = classPathFull.replace("BlueprintGeneratedClass'", "").replace("."+OBJECT_OUTER+"'", "");
+    
+    text += "\n\t"+classPathPure;
+    
+    const className = OBJECT_OUTER;
+
+    text += "\n- Class Name:"
+    text += "\n\t"+className;
+
+    return text;
+
 }
