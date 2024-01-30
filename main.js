@@ -78,7 +78,9 @@ function convert_element_to_obsidian(element){
         return convert_structure_to_obsidian(element);
     } else if (element.Type === "UserDefinedEnum"){ // Is a Enum?
         return convert_enum_to_obsidian(element);
-    } else if (OBJECT_OUTER && element.Type === OBJECT_OUTER){ // Is the ClassPath?
+    } else if (element.Type === "DataTable"){ // Is a DataTable?
+        return convert_DT_to_obsidian(element);
+    }else if (OBJECT_OUTER && element.Type === OBJECT_OUTER){ // Is the ClassPath?
         return extract_class_path(element);
     }
 
@@ -552,6 +554,71 @@ function struct_convert_childData_to_obsidian(text, data){
     }
 
     return text;
+
+}
+
+function convert_DT_to_obsidian(data){
+    let text = "\n\t- "
+
+    text += "Datas:";
+
+    const rows = data.Rows;
+
+    for (let key in rows) {
+
+        console.trace(rows[key])
+        let child_text = "\n\t\t- "
+        let child = rows[key];
+
+
+        child_text += key;
+        
+        child_text += ":";
+        child_text = DT_convert_properties_to_obsidian(child, child_text);
+
+        text += child_text;
+    }
+
+    return text;
+}
+
+function DT_convert_properties_to_obsidian(data, text){
+
+    for(key in data){
+
+        const object = data[key];
+
+        const readableKey = key.split("_")[0];
+
+        text += "\n\t\t\t- "
+        text += readableKey;
+
+        if (object != null){
+
+            text += " - "
+
+            if(object.hasOwnProperty("ObjectName")){
+                let name = object.ObjectName;
+
+                let readableName = name.split("_")[0];
+
+                if (readableName.includes("UserDefinedEnum")){
+                    readableName = readableName.replace("UserDefinedEnum'", "").replace("'", "");
+                } else if (readableName.includes("BlueprintGeneratedClass")){
+                    readableName = readableName.replace("BlueprintGeneratedClass'", "").replace("'", "");
+                }
+
+                text += readableName;
+            } else {
+                text += object;
+            }
+        } else {
+            text += " - "
+            text += "null";
+        }
+    }
+
+    return text
 
 }
 
